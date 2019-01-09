@@ -4,12 +4,12 @@ name := "beam-scala-examples"
 
 version := "1.0-SNAPSHOT"
 
-scalaVersion := "2.12.4"
+scalaVersion := "2.12.8"
 
 lazy val scalaMainVersion = "2.12"
-lazy val beamVersion = "2.1.0"
+lazy val beamVersion = "2.9.0"
 lazy val slf4jVersion = "1.7.25"
-lazy val scalaTestVersion = "3.0.4"
+lazy val scalaTestVersion = "3.0.5"
 
 libraryDependencies ++= Seq(
   "org.apache.beam" % "beam-runners-google-cloud-dataflow-java" % beamVersion,
@@ -26,3 +26,5 @@ assemblyMergeStrategy in assembly := {
   case PathList("META-INF", xs@_*) => MergeStrategy.discard // otherwise google's repacks blow up
   case _ => MergeStrategy.first
 }
+
+mainClass in assembly := Some("org.apache.beam.examples.WordCount")
