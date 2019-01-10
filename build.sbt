@@ -10,10 +10,14 @@ lazy val scalaMainVersion = "2.12"
 lazy val beamVersion = "2.9.0"
 lazy val slf4jVersion = "1.7.25"
 lazy val scalaTestVersion = "3.0.5"
+lazy val beamKafkaVersion = "2.9.0"
 
 libraryDependencies ++= Seq(
   "org.apache.beam" % "beam-runners-google-cloud-dataflow-java" % beamVersion,
   "org.apache.beam" % "beam-runners-direct-java" % beamVersion,
+  "org.apache.beam" % "beam-sdks-java-io-kafka" % beamKafkaVersion,
+  "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.9.8",
+  "com.fasterxml.jackson.datatype" % "jackson-datatype-joda" % "2.9.8",
   "org.slf4j" % "slf4j-api" % slf4jVersion,
   "org.slf4j" % "slf4j-log4j12" % slf4jVersion,
   "org.scalatest" % s"scalatest_${scalaMainVersion}" % scalaTestVersion % "test"
@@ -27,4 +31,4 @@ assemblyMergeStrategy in assembly := {
   case _ => MergeStrategy.first
 }
 
-mainClass in assembly := Some("org.apache.beam.examples.WordCount")
+mainClass in assembly := Some("org.apache.beam.examples.SimpleKafkaToBQ")
