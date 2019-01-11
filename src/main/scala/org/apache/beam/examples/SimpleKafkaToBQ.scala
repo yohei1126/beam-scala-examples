@@ -32,13 +32,12 @@ object SimpleKafkaToBQ {
         new TableFieldSchema().setName("text3").setType("STRING")))
 
     val p = Pipeline.create(options)
-    // TODO exactly once on read
     p.apply("ReadFromKafka", KafkaIO.read()
       .withBootstrapServers(options.getBootstreapServers)
       .withTopics(util.Arrays.asList(options.getKafkaTopic))
       .withKeyDeserializer(classOf[LongDeserializer])
       .withValueDeserializer(classOf[StringDeserializer]))
-     // KafkaIO returns PCollection[KafkaRecord] so needs to convert it to record
+    // convert PCollection[KafkaRecord] (KafkaIO response) to Message object
     .apply(ParDo.of(new ConvertTextToMessage))
     .apply("WriteToBQ", BigQueryIO.write()
         .to(options.getDestTable)
@@ -46,7 +45,7 @@ object SimpleKafkaToBQ {
         .withFormatFunction(new ConvertMessageToTable())
         .withCreateDisposition(BigQueryIO.Write.CreateDisposition.CREATE_IF_NEEDED)
         .withWriteDisposition(BigQueryIO.Write.WriteDisposition.WRITE_APPEND))
-    p.run.waitUntilFinish
+    p.run
   }
 }
 
@@ -76,7 +75,6 @@ trait SimpleKafkaToBQOptions extends PipelineOptions {
 case class Message(text: String, number: Int, timestamp: String)
 
 class ConvertMessageToTable extends SerializableFunction[Message, TableRow] {
-  // TODO de-duplication
   private val logger: Logger = LoggerFactory.getLogger(classOf[ConvertMessageToTable])
   def apply(record: Message): TableRow = {
     logger.info(s"message = $record")
